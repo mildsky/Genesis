@@ -3413,6 +3413,29 @@ class RigidSolver(Solver):
             self._func_apply_external_torque_link_inertial_frame(ti.Vector([0.0, 0.0, torque]), COM_link_idx, b)
 
     @ti.kernel
+    def _kernel_set_drone_rpm2(
+        self,
+        n_propellers: ti.i32,
+        COM_link_idx: ti.i32,
+        propellers_link_idxs: ti.types.ndarray(),
+        propellers_rpm: ti.types.ndarray(),
+        propellers_spin: ti.types.ndarray(),
+        KF: ti.types.ndarray(),
+        KM: ti.types.ndarray(),
+    ):
+        """
+        Set the RPM of propellers of a drone entity.
+        Should only be called by drone entities.
+        """
+        for b in range(self._B):
+            torque = 0.0
+            for i in range(n_propellers):
+                force_i = propellers_rpm[i, b] ** 2 * KF
+                torque += propellers_rpm[i, b] ** 2 * KM * propellers_spin[i]
+                self._func_apply_external_force_link_inertial_frame(ti.Vector([0.0, 0.0, 0.0]), ti.Vector([0.0, 0.0, force_i]), propellers_link_idxs[i], b)
+            self._func_apply_external_torque_link_inertial_frame(ti.Vector([0.0, 0.0, torque]), COM_link_idx, b)
+
+    @ti.kernel
     def _update_drone_propeller_vgeoms(
         self,
         n_propellers: ti.i32,

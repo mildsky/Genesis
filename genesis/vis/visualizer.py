@@ -151,6 +151,8 @@ class Visualizer(RBC):
                 for entity in self._scene.rigid_solver.entities:
                     if isinstance(entity, gs.engine.entities.DroneEntity):
                         entity.update_propeller_vgeoms()
+                    elif isinstance(entity, gs.engine.entities.MultimodalEntity):
+                        entity.update_propeller_vgeoms()
 
                 self._scene.rigid_solver.update_vgeoms_render_T()
 

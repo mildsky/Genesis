@@ -83,6 +83,9 @@ class RigidEntity(Entity):
         elif isinstance(self._morph, gs.morphs.Drone):
             self._load_URDF(self._morph, self._surface)
 
+        elif isinstance(self._morph, gs.morphs.MultimodalRobot):
+            self._load_URDF(self._morph, self._surface)
+
         elif isinstance(self._morph, gs.morphs.Primitive):
             self._load_primitive(self._morph, self._surface)
 
