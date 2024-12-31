@@ -630,20 +630,22 @@ class MultimodalRobot(FileMorph):
         The spin direction of the propellers. 1: CCW, -1: CW. Defaults to [-1, 1, -1, 1].
     """
 
-    model: str = "CF2X"
     fixed: bool = False
     prioritize_urdf_material: bool = False
+    requires_jac_and_IK: bool = True
+    merge_fixed_links: bool = True
+    links_to_keep: List[str] = []
+    # Multimodal Entity required parameters
     COM_link_name: str = "center_of_mass_link"
     propellers_link_names: List[str] = ["prop0_link", "prop1_link", "prop2_link", "prop3_link"]
     propellers_spin: List[int] = [-1, 1, -1, 1]  # 1: CCW, -1: CW
-
+    KF: List[float] = [1.5e-6, 1.5e-6, 1.5e-6, 1.5e-6]   # 5" 3-blade propeller
+    KM: List[float] = [1.5e-7, 1.5e-7, 1.5e-7, 1.5e-7]   # 1/10 of KF
     def __init__(self, **data):
         super().__init__(**data)
+        # check urdf or mjcf
         if isinstance(self.file, str) and not self.file.endswith(".urdf"):
-            gs.raise_exception(f"Drone only supports `.urdf` extension: {self.file}")
-
-        if self.model not in ["CF2X", "CF2P", "RACE"]:
-            gs.raise_exception(f"Unsupported `model`: {self.model}.")
+            gs.raise_exception(f"MultimodalRobot only supports `.urdf` extension: {self.file}")
 
 class Terrain(Morph):
     """
